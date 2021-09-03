@@ -539,7 +539,10 @@ bool ImFontAtlasBuildWithFreeTypeEx(FT_Library ft_library, ImFontAtlas* atlas, u
             if (buf_bitmap_current_used_bytes + bitmap_size_in_bytes > BITMAP_BUFFERS_CHUNK_SIZE)
             {
                 buf_bitmap_current_used_bytes = 0;
-                buf_bitmap_buffers.push_back((unsigned char*)IM_ALLOC(BITMAP_BUFFERS_CHUNK_SIZE));
+                
+                // Allocate bitmap_size_in_bytes if it is larger than the chunk size
+                // this can happen when loading a font at a very large pixel size
+                buf_bitmap_buffers.push_back((unsigned char*)IM_ALLOC(bitmap_size_in_bytes > BITMAP_BUFFERS_CHUNK_SIZE ? bitmap_size_in_bytes : BITMAP_BUFFERS_CHUNK_SIZE));
             }
 
             // Blit rasterized pixels to our temporary buffer and keep a pointer to it.
